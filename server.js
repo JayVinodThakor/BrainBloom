@@ -13,10 +13,10 @@ app.use(cors());
 app.use(express.json());
 
 // ===== DEBUG (helps you verify env working) =====
-console.log("MONGO_URI:", process.env.MONGO_URI ? "Loaded ✅" : "Missing ❌");
+console.log("MONGO_URI:", process.env.mongodb:mongo:LSOUcJYYodCFltatnLaWCIAfUnWFdGmI@mainline.proxy.rlwy.net:16352 ? "Loaded ✅" : "Missing ❌");
 
 // ===== CONNECT DB =====
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.mongodb: mongo:LSOUcJYYodCFltatnLaWCIAfUnWFdGmI@mainline.proxy.rlwy.net:16352)
   .then(() => console.log("MongoDB connected 🚀"))
   .catch(err => console.log("Mongo Error:", err));
 
