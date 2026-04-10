@@ -202,6 +202,28 @@ if (!token) {
 </div>
 
 <script>
+function speakText(text) {
+  const speech = new SpeechSynthesisUtterance(text);
+
+  // Female-ish voice selection
+  const voices = speechSynthesis.getVoices();
+  const femaleVoice = voices.find(v => v.name.toLowerCase().includes("female") || v.name.includes("Google UK English Female"));
+
+  if (femaleVoice) speech.voice = femaleVoice;
+
+  speech.rate = 1;
+  speech.pitch = 1.1;
+
+  speechSynthesis.speak(speech);
+
+  // 🔮 Trigger orb animation
+  document.getElementById("orb").classList.add("speaking");
+
+  speech.onend = () => {
+    document.getElementById("orb").classList.remove("speaking");
+  };
+}
+  
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('collapsed');
 }
