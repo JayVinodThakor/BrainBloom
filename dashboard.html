@@ -223,17 +223,31 @@ async function sendMessage(){
 
   if(input.value.trim()==='') return;
 
-  const userText = input.value;
-
-  // USER MESSAGE
   const userMsg = document.createElement('div');
   userMsg.className='message user';
-  userMsg.innerText=userText;
+  userMsg.innerText=input.value;
   chatBox.appendChild(userMsg);
 
+  const message = input.value;
   input.value='';
-  chatBox.scrollTop = chatBox.scrollHeight;
 
+  const res = await fetch("https://backend-production-bc2c.up.railway.app/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await res.json();
+
+  const aiMsg = document.createElement('div');
+  aiMsg.className='message ai';
+  aiMsg.innerText=data.reply;
+
+  chatBox.appendChild(aiMsg);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
   // LOADING MESSAGE
   const loadingMsg = document.createElement('div');
   loadingMsg.className='message ai';
