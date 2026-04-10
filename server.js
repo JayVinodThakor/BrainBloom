@@ -1,34 +1,32 @@
-// ===== IMPORTS =====
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// ===== INIT =====
 const app = express();
 
 // ===== MIDDLEWARE =====
 app.use(cors());
 app.use(express.json());
 
-// ===== MONGO CONNECT =====
-// 👉 Replace with your Railway Mongo URL
-mongoose.connect("mongodb://mongo:LSOUcJYYodCFltatnLaWCIAfUnWFdGmI@mainline.proxy.rlwy.net:16352")
-  .then(() => console.log("MongoDB connected 🚀"))
-  .catch(err => console.log(err));
+// ===== DEBUG (helps you verify env working) =====
+console.log("MONGO_URI:", process.env.MONGO_URI ? "Loaded ✅" : "Missing ❌");
 
-// ===== USER MODEL =====
-const userSchema = new mongoose.Schema({
+// ===== CONNECT DB =====
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected 🚀"))
+  .catch(err => console.log("Mongo Error:", err));
+
+// ===== MODEL =====
+const User = mongoose.model("User", {
   email: String,
   password: String
 });
 
-const User = mongoose.model("User", userSchema);
-
-// ===== ROUTES =====
-
-// TEST ROUTE
+// ===== TEST ROUTE =====
 app.get("/", (req, res) => {
   res.send("Backend running 🚀");
 });
@@ -38,27 +36,29 @@ app.post("/api/register", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // check if user exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.json({ message: "User already exists" });
+    if (!email || !password) {
+      return res.json({ message: "Fill all fields" });
     }
 
-    // hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const exists = await User.findOne({ email });
+    if (exists) return res.json({ message: "User already exists" });
 
-    // create user
-    const user = new User({
-      email,
-      password: hashedPassword
-    });
+    const hash = await bcrypt.hash(password, 10);
 
+    const user = new User({ email, password: hash });
     await user.save();
 
-    res.json({ message: "User registered ✅" });
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({ token });
 
   } catch (err) {
-    res.json({ message: "Error registering user" });
+    console.log(err);
+    res.status(500).json({ message: "Register error" });
   }
 });
 
@@ -67,51 +67,42 @@ app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    if (!email || !password) {
+      return res.json({ message: "Fill all fields" });
+    }
+
     const user = await User.findOne({ email });
+    if (!user) return res.json({ message: "User not found" });
 
-    if (!user) {
-      return res.json({ message: "User not found" });
-    }
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.json({ message: "Wrong password" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.json({ message: "Wrong password" });
-    }
-
-    // create token
     const token = jwt.sign(
       { id: user._id },
-      "SECRET_KEY",
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    res.json({
-      message: "Login successful 😎",
-      token
-    });
+    res.json({ token });
 
   } catch (err) {
-    res.json({ message: "Login error" });
+    console.log(err);
+    res.status(500).json({ message: "Login error" });
   }
 });
 
-// ===== CHAT (TEMP AI) =====
-app.post("/api/chat", async (req, res) => {
+// ===== CHAT =====
+app.post("/api/chat", (req, res) => {
   const { message } = req.body;
 
-  try {
-    // fake AI (replace later)
-    const reply = "AI says: " + message;
-
-    res.json({ reply });
-
-  } catch (err) {
-    res.json({ reply: "Error occurred" });
-  }
+  res.json({
+    reply: "AI says: " + message
+  });
 });
 
 // ===== START SERVER =====
-app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000 🚀");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} 🚀`);
 });
