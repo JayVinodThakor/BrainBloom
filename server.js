@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const app = express();
+
 MONGO_URI= mongodb://mongo:LSOUcJYYodCFltatnLaWCIAfUnWFdGmI@mainline.proxy.rlwy.net:16352
 JWT_SECRET=Brainbloom2209
 
@@ -18,7 +19,7 @@ app.use(express.json());
 console.log("MONGO_URI:", process.env.MONGO_URI ? "Loaded ✅" : "Missing ❌");
 
 // ===== CONNECT DB =====
-mongoose.connect(process.env.)
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected 🚀"))
   .catch(err => console.log("Mongo Error:", err));
 
