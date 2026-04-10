@@ -22,6 +22,56 @@ body{
   overflow:hidden;
 }
 
+.ai-panel{
+  position:absolute;
+  right:20px;
+  top:50%;
+  transform:translateY(-50%);
+  width:250px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:20px;
+}
+
+/* 🔮 ORB */
+#orb{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #a78bfa, #6d28d9);
+  box-shadow: 0 0 40px rgba(124,58,237,0.7);
+  transition:0.3s;
+}
+
+/* speaking animation */
+#orb.speaking{
+  animation: pulse 0.6s infinite alternate;
+}
+
+@keyframes pulse{
+  from{
+    transform: scale(1);
+    box-shadow: 0 0 20px #7c3aed;
+  }
+  to{
+    transform: scale(1.1);
+    box-shadow: 0 0 60px #c084fc;
+  }
+}
+
+/* AI TEXT */
+#aiText{
+  text-align:center;
+  color:white;
+  font-size:14px;
+  background:rgba(255,255,255,0.1);
+  padding:10px;
+  border-radius:12px;
+  max-height:120px;
+  overflow:auto;
+}
+
 /* SIDEBAR */
 .sidebar{
   width:250px;
@@ -193,8 +243,12 @@ if (!token) {
 </div>
 
 <div class="main">
+  <div class="ai-panel">
+    <div id="orb"></div>
+    <div id="aiText"></div>
+  </div>
   <div class="chat-box" id="chatBox"></div>
-
+  
   <div class="input-area">
     <input type="text" id="userInput" placeholder="Ask something...">
     <button onclick="sendMessage()">Send</button>
@@ -243,23 +297,53 @@ async function sendMessage(){
   const input = document.getElementById('userInput');
   const chatBox = document.getElementById('chatBox');
 
-  if(input.value.trim()==='') return;
+  if(input.value.trim() === '') return;
 
+  // 👤 USER MESSAGE
   const userMsg = document.createElement('div');
-  userMsg.className='message user';
-  userMsg.innerText=input.value;
+  userMsg.className = 'message user';
+  userMsg.innerText = input.value;
   chatBox.appendChild(userMsg);
 
   const message = input.value;
-  input.value='';
+  input.value = '';
 
-  const res = await fetch("https://backend-production-bc2c.up.railway.app/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message })
-  });
+  try {
+    // 🤖 API CALL
+    const res = await fetch("https://backend-production-bc2c.up.railway.app/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await res.json();
+    const aiText = data.reply;
+
+    // 💬 CHAT BOX MESSAGE
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'message ai';
+    aiMsg.innerText = aiText;
+    chatBox.appendChild(aiMsg);
+
+    // 🔮 SIDE PANEL TEXT
+    document.getElementById("aiText").innerText = aiText;
+
+    // 🔊 SPEECH FUNCTION
+    speakText(aiText);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+  } catch (err) {
+    console.error(err);
+
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'message ai';
+    errorMsg.innerText = "⚠️ AI not responding";
+    chatBox.appendChild(errorMsg);
+  }
+}
 
   const data = await res.json();
 
