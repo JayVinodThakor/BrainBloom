@@ -368,42 +368,6 @@ async function sendMessage(){
   }
 }
 
-  const data = await res.json();
-
-  const aiMsg = document.createElement('div');
-  aiMsg.className='message ai';
-  aiMsg.innerText=data.reply;
-
-  chatBox.appendChild(aiMsg);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-  // LOADING MESSAGE
-  const loadingMsg = document.createElement('div');
-  loadingMsg.className='message ai';
-  loadingMsg.innerText="Typing...";
-  chatBox.appendChild(loadingMsg);
-
-  try {
-    const res = await fetch("https://brainbloom-production.up.railway.app/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token")
-      },
-      body: JSON.stringify({ message: userText })
-    });
-
-    const data = await res.json();
-
-    loadingMsg.innerText = data.reply || "No response from AI";
-
-  } catch (err) {
-    console.error(err);
-    loadingMsg.innerText = "⚠️ Server error. Try again.";
-  }
-
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
 </script>
 
 </body>
