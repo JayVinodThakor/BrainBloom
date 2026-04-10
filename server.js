@@ -7,16 +7,18 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const app = express();
+MONGO_URI= mongodb://mongo:LSOUcJYYodCFltatnLaWCIAfUnWFdGmI@mainline.proxy.rlwy.net:16352
+JWT_SECRET=Brainbloom2209
 
 // ===== MIDDLEWARE =====
 app.use(cors());
 app.use(express.json());
 
 // ===== DEBUG (helps you verify env working) =====
-console.log("MONGO_URI:", process.env.mongodb:mongo:LSOUcJYYodCFltatnLaWCIAfUnWFdGmI@mainline.proxy.rlwy.net:16352 ? "Loaded ✅" : "Missing ❌");
+console.log("MONGO_URI:", process.env.MONGO_URI ? "Loaded ✅" : "Missing ❌");
 
 // ===== CONNECT DB =====
-mongoose.connect(process.env.mongodb: mongo:LSOUcJYYodCFltatnLaWCIAfUnWFdGmI@mainline.proxy.rlwy.net:16352)
+mongoose.connect(process.env.)
   .then(() => console.log("MongoDB connected 🚀"))
   .catch(err => console.log("Mongo Error:", err));
 
