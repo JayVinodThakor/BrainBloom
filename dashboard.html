@@ -216,40 +216,6 @@ if (!token) {
   window.location.href = "index.html";
 }
 </script>
-</head>
-
-<body>
-
-<div class="sidebar" id="sidebar">
-  <div>
-    <div class="menu-toggle" onclick="toggleSidebar()"> ☰</div>
-    <h2>BrainBloom</h2>
-
-    <div class="menu">
-      <button class="btn" onclick="newChat()">📌 New Chat</button>
-      <button class="btn">📜 History</button>
-    </div>
-  </div>
-
-  <div>
-    <button class="profile-btn">👤</button>
-  </div>
-</div>
-
-<div class="main">
-  <div class="ai-panel">
-    <div id="orb"></div>
-    <div id="aiText"></div>
-  </div>
-  <div class="chat-box" id="chatBox"></div>
-  
-  <div class="input-area">
-    <input type="text" id="userInput" placeholder="Ask something...">
-    <button onclick="sendMessage()">Send</button>
-    <button onclick="startListening()">🎤</button>
-  </div>
-</div>
-
 <script>
 
 let recognition;
@@ -369,6 +335,39 @@ async function sendMessage(){
 }
 
 </script>
+</head>
+
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div>
+    <div class="menu-toggle" onclick="toggleSidebar()"> ☰</div>
+    <h2>BrainBloom</h2>
+
+    <div class="menu">
+      <button class="btn" onclick="newChat()">📌 New Chat</button>
+      <button class="btn">📜 History</button>
+    </div>
+  </div>
+
+  <div>
+    <button class="profile-btn">👤</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="ai-panel">
+    <div id="orb"></div>
+    <div id="aiText"></div>
+  </div>
+  <div class="chat-box" id="chatBox"></div>
+  
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Ask something...">
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="startListening()">🎤</button>
+  </div>
+</div>
 
 </body>
 </html>
