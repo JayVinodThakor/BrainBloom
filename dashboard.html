@@ -241,7 +241,7 @@ async function sendMessage(){
   chatBox.appendChild(loadingMsg);
 
   try {
-    const res = await fetch("https://brainbloom-production.up.railway.app/chat", {
+    const res = await fetch("https://brainbloom-production.up.railway.app/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
